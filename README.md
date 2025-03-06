@@ -1,85 +1,128 @@
 # 小说家俱乐部 (Novelist Club)
 
+[English](#novelist-club) | [日本語](#ノベリストクラブ)
+
 一个基于多Agent协同的自动小说创作系统。
 
-## 项目结构
+## 功能特点
 
-```
-novelist/
-├── agents/                # Agent实现
-│   ├── creator_agent.py   # 故事创意生成器
-│   ├── writer_agent.py    # 小说创作者
-│   ├── supervisor_agent.py # 故事监制
-│   └── editor_agent.py    # 文字编辑
-├── core/                  # 核心功能模块
-│   ├── workflow.py        # 工作流控制
-│   └── logging.py         # 日志系统
-├── configs/               # 配置文件
-│   └── story_seed.yaml    # 故事种子配置
-├── outputs/               # 输出目录
-│   ├── outlines/          # 故事大纲
-│   ├── drafts/           # 小说草稿
-│   └── logs/             # 系统日志
-└── app.py                # 主程序入口
-```
+- 多Agent协同创作，模拟完整的小说创作流程
+- 基于AutoGen框架的智能交互系统
+- 支持自定义故事主题和写作风格
+- 完整的日志记录和版本控制
 
-## 系统流程
+## 系统组件
 
-1. **故事构思**: 创意生成器(CreatorAgent)根据故事种子配置生成故事大纲
-2. **内容创作**: 小说作家(WriterAgent)根据大纲进行创作
-3. **情节审核**: 故事监制(SupervisorAgent)审核内容逻辑和合理性
-4. **文字优化**: 文字编辑(EditorAgent)进行校对和润色
+- **创意生成器**: 负责故事构思和大纲生成
+- **小说作家**: 根据大纲进行内容创作
+- **故事监制**: 审核内容逻辑和合理性
+- **文字编辑**: 进行文本校对和润色
 
-整个过程是一个循环，直到产出符合要求的作品。每个Agent的工作记录都会通过日志系统详细记录。
+## 快速开始
 
-## 配置文件说明
+1. 克隆项目：
+   ```bash
+   git clone git@github.com:magatamaclub/novelist.git
+   ```
 
-故事种子配置文件(story_seed.yaml)包含：
-- 基本信息（标题、主题）
-- 故事背景设定
-- 人物设定
-- 情节要素
-- 写作风格偏好
-
-## 使用方法
-
-1. 配置Python环境（要求Python 3.9+）
 2. 安装依赖：
-```bash
-pip install -r requirements.txt
-```
+   ```bash
+   pip install -e .
+   ```
 
-3. 准备故事种子配置文件：
-```yaml
-# configs/story_seed.yaml
-title: "故事标题"
-theme: "故事主题"
-...
-```
+3. 设置环境变量（参考.env.example）
 
 4. 运行程序：
-```bash
-python -m novelist.app
-```
+   ```bash
+   python -m novelist
+   ```
 
-## 输出说明
+## 详细文档
 
-- outlines/: 存放生成的故事大纲（YAML格式）
-- drafts/: 存放小说草稿和最终稿（TXT格式）
-- logs/: 存放系统运行日志，记录每个Agent的工作过程
+请参考 [Wiki页面](https://github.com/magatamaclub/novelist/wiki)
 
-## 待开发功能
+---
 
-- [ ] 接入大模型API进行智能创作
-- [ ] 增加更多写作风格选项
-- [ ] 支持多种输出格式（Markdown、PDF等）
-- [ ] 提供Web界面进行配置和监控
-- [ ] 增加更多类型的写作模板
+# Novelist Club
 
-## 贡献指南
+A collaborative novel writing system based on multiple AI agents.
 
-欢迎提交Issue和Pull Request来完善项目。
+## Features
 
-## 开源协议
+- Multi-agent collaboration simulating complete novel writing process
+- Intelligent interaction system based on AutoGen framework
+- Customizable story themes and writing styles
+- Complete logging and version control
 
-MIT License
+## Components
+
+- **Creator**: Responsible for story conception and outline generation
+- **Writer**: Creates content based on the outline
+- **Supervisor**: Reviews content logic and coherence
+- **Editor**: Performs text proofreading and polishing
+
+## Quick Start
+
+1. Clone the repository:
+   ```bash
+   git clone git@github.com:magatamaclub/novelist.git
+   ```
+
+2. Install dependencies:
+   ```bash
+   pip install -e .
+   ```
+
+3. Set environment variables (refer to .env.example)
+
+4. Run the program:
+   ```bash
+   python -m novelist
+   ```
+
+## Documentation
+
+Please refer to our [Wiki page](https://github.com/magatamaclub/novelist/wiki)
+
+---
+
+# ノベリストクラブ
+
+複数のAIエージェントによる協調小説執筆システム。
+
+## 特徴
+
+- 完全な小説執筆プロセスをシミュレートするマルチエージェント協調
+- AutoGenフレームワークによるインテリジェントな対話システム
+- カスタマイズ可能なストーリーテーマと執筆スタイル
+- 完全なログ記録とバージョン管理
+
+## コンポーネント
+
+- **クリエイター**: ストーリーの構想とアウトライン生成を担当
+- **ライター**: アウトラインに基づいてコンテンツを作成
+- **スーパーバイザー**: コンテンツの論理性と一貫性をレビュー
+- **エディター**: テキストの校正と洗練を実施
+
+## クイックスタート
+
+1. リポジトリをクローン：
+   ```bash
+   git clone git@github.com:magatamaclub/novelist.git
+   ```
+
+2. 依存関係をインストール：
+   ```bash
+   pip install -e .
+   ```
+
+3. 環境変数を設定（.env.exampleを参照）
+
+4. プログラムを実行：
+   ```bash
+   python -m novelist
+   ```
+
+## ドキュメント
+
+詳細は[Wikiページ](https://github.com/magatamaclub/novelist/wiki)をご参照ください。
