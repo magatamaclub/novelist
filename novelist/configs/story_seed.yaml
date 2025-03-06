@@ -1,0 +1,45 @@
+title: "月光下的承诺"
+theme: "爱情与成长"
+settings:
+  time: "现代"
+  location: "沿海城市"
+  season: "夏末秋初"
+
+characters:
+  - name: "林晓月"
+    role: "主角"
+    age: 24
+    occupation: "设计师"
+    traits:
+      - "独立"
+      - "追求梦想"
+      - "略带文艺气质"
+    background: "来自内陆城市，为了追求设计梦想来到沿海城市"
+
+  - name: "陈志远"
+    role: "男主角"
+    age: 26
+    occupation: "创业者"
+    traits:
+      - "执着"
+      - "有担当"
+      - "工作狂"
+    background: "本地人，创业公司的创始人，专注于工作"
+
+plot_elements:
+  conflicts:
+    - "事业与爱情的平衡"
+    - "异地恋带来的考验"
+    - "价值观的碰撞与融合"
+  
+  key_scenes:
+    - "海边初遇"
+    - "合作项目中的火花"
+    - "误会与和解"
+    - "共同成长"
+
+style_preferences:
+  tone: "温暖治愈"
+  pacing: "舒缓"
+  narrative: "第三人称"
+  focus: "情感刻画"

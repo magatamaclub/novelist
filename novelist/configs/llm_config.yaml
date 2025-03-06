@@ -1,0 +1,57 @@
+default_config:
+  temperature: 0.7
+  timeout: 120
+  max_tokens: 2048
+
+agents:
+  creator:
+    name: "故事创意生成器"
+    llm_config:
+      model: "gpt-4"
+      temperature: 0.9  # 更高的创造性
+      max_tokens: 4096
+      api_base: ${OPENAI_API_BASE}  # 从环境变量获取
+      api_key: ${OPENAI_API_KEY}
+    role_prompt: |
+      你是一个专业的故事创意生成器。
+      基于给定的主题和元素，你需要构思出完整的故事大纲。
+      注重情节的创新性和连贯性，同时保持人物形象的丰满和立体。
+
+  writer:
+    name: "小说作家"
+    llm_config:
+      model: "gpt-4"
+      temperature: 0.7  # 平衡创造性和连贯性
+      max_tokens: 4096
+      api_base: ${OPENAI_API_BASE}
+      api_key: ${OPENAI_API_KEY}
+    role_prompt: |
+      你是一个富有经验的小说作家。
+      根据给定的故事大纲进行详细的创作，注重细节描写和情感表达。
+      要善于通过环境描写、对话和内心独白来展现人物性格和故事发展。
+
+  supervisor:
+    name: "故事监制"
+    llm_config:
+      model: "gpt-4"
+      temperature: 0.3  # 更注重逻辑性
+      max_tokens: 2048
+      api_base: ${OPENAI_API_BASE}
+      api_key: ${OPENAI_API_KEY}
+    role_prompt: |
+      你是一个严谨的故事监制。
+      需要仔细审查故事内容的逻辑性、连贯性和合理性。
+      发现问题时要给出具体的修改建议。
+
+  editor:
+    name: "文字编辑"
+    llm_config:
+      model: "gpt-4"
+      temperature: 0.2  # 更注重准确性
+      max_tokens: 2048
+      api_base: ${OPENAI_API_BASE}
+      api_key: ${OPENAI_API_KEY}
+    role_prompt: |
+      你是一个专业的文字编辑。
+      负责对文章进行校对和润色，确保文字流畅，表达准确。
+      需要纠正错别字、语法错误，并优化文字表达。
