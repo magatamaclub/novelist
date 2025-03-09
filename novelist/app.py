@@ -61,21 +61,30 @@ async def main():
         # 加载故事种子
         story_seed = load_story_seed()
 
-        # 初始化工作流
+        # 创建并配置工作流
         workflow = WorkflowManager()
         workflow.update_context({"story_seed": story_seed})
 
-        # 注册Agents
-        workflow.register_agent("creator", CreatorAgent())
-        workflow.register_agent("writer", WriterAgent())
-        workflow.register_agent("supervisor", SupervisorAgent())
-        workflow.register_agent("editor", EditorAgent())
+        # 注册所有参与创作的Agents
+        agents = {
+            "creator": CreatorAgent(),  # 创意生成
+            "writer": WriterAgent(),  # 写作
+            "supervisor": SupervisorAgent(),  # 审核
+            "editor": EditorAgent(),  # 编辑
+        }
+
+        for name, agent in agents.items():
+            workflow.register_agent(name, agent)
+            logger.info(f"已注册 {name} Agent")
 
         # 执行工作流
-        logger.info("开始执行创作工作流")
+        logger.info("开始小说创作工作流")
         result = await workflow.run_workflow()
 
-        # 保存最终结果
+        if "final_draft" not in result:
+            raise ValueError("工作流未生成最终作品")
+
+        # 保存创作结果
         output_dir = os.path.join(os.path.dirname(__file__), "outputs", "drafts")
         os.makedirs(output_dir, exist_ok=True)
 

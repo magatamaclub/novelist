@@ -1,128 +1,120 @@
-# 小说家俱乐部 (Novelist Club)
+# Novelist - AI驱动的小说创作系统
 
-[English](#novelist-club) | [日本語](#ノベリストクラブ)
-
-一个基于多Agent协同的自动小说创作系统。
+一个基于多Agent协同的自动小说创作系统，使用 DeepSeek 模型实现智能创作。
 
 ## 功能特点
 
-- 多Agent协同创作，模拟完整的小说创作流程
-- 基于AutoGen框架的智能交互系统
-- 支持自定义故事主题和写作风格
-- 完整的日志记录和版本控制
+- 多角色协同：创意生成、写作、审核、编辑
+- 基于 DeepSeek 大模型
+- 可自定义故事设定
+- 完整的日志记录
+- 自动保存创作成果
 
-## 系统组件
-
-- **创意生成器**: 负责故事构思和大纲生成
-- **小说作家**: 根据大纲进行内容创作
-- **故事监制**: 审核内容逻辑和合理性
-- **文字编辑**: 进行文本校对和润色
-
-## 快速开始
+## 安装步骤
 
 1. 克隆项目：
+```bash
+git clone [项目地址]
+cd novelist
+```
+
+2. 创建并激活虚拟环境（推荐）：
+```bash
+# 创建虚拟环境
+python -m venv venv
+
+# 激活虚拟环境
+# Windows:
+venv\Scripts\activate
+# Linux/Mac:
+source venv/bin/activate
+```
+
+3. 安装依赖：
+```bash
+# 安装基本依赖
+pip install -e .
+
+# 如需运行测试，安装完整依赖
+pip install -e ".[test]"
+```
+
+## 配置
+
+1. 创建环境变量文件：
+```bash
+# 复制示例文件
+cp .env.example .env
+
+# 编辑 .env 文件，填入您的 DeepSeek API 密钥
+vim .env
+```
+
+2. 在 .env 文件中配置：
+```
+DEEPSEEK_API_KEY=your-api-key-here
+DEEPSEEK_API_BASE=https://api.deepseek.com/v1
+```
+
+## 运行
+
+1. 基本运行：
+```bash
+# 确保在项目根目录
+python -m novelist
+
+# 或使用安装后的命令
+novelist
+```
+
+2. 自定义故事设定：
+   - 编辑 `novelist/configs/story_seed.yaml` 文件
+   - 修改标题、人物、情节等设定
+
+3. 查看输出：
+   - 故事草稿：`novelist/outputs/drafts/`
+   - 运行日志：`novelist/outputs/logs/`
+
+## 运行测试
+
+```bash
+# 运行所有测试
+pytest tests/
+
+# 带覆盖率报告
+pytest --cov=novelist tests/
+```
+
+## 项目结构
+
+```
+novelist/
+├── novelist/          # 主代码目录
+│   ├── agents/       # AI角色实现
+│   ├── configs/      # 配置文件
+│   ├── core/         # 核心功能
+│   └── outputs/      # 输出目录
+└── tests/            # 测试用例
+```
+
+## 常见问题
+
+1. ModuleNotFoundError：确保已正确安装所有依赖
    ```bash
-   git clone git@github.com:magatamaclub/novelist.git
+   pip install -e ".[test]"
    ```
 
-2. 安装依赖：
-   ```bash
-   pip install -e .
-   ```
+2. API错误：检查 .env 文件中的 API 密钥配置
 
-3. 设置环境变量（参考.env.example）
+3. 权限问题：确保 outputs 目录可写
 
-4. 运行程序：
-   ```bash
-   python -m novelist
-   ```
+## 开发计划
 
-## 详细文档
+- [ ] 支持更多写作风格
+- [ ] 增加角色对话生成
+- [ ] 添加情节智能推荐
+- [ ] Web界面支持
 
-请参考 [Wiki页面](https://github.com/magatamaclub/novelist/wiki)
+## 许可证
 
----
-
-# Novelist Club
-
-A collaborative novel writing system based on multiple AI agents.
-
-## Features
-
-- Multi-agent collaboration simulating complete novel writing process
-- Intelligent interaction system based on AutoGen framework
-- Customizable story themes and writing styles
-- Complete logging and version control
-
-## Components
-
-- **Creator**: Responsible for story conception and outline generation
-- **Writer**: Creates content based on the outline
-- **Supervisor**: Reviews content logic and coherence
-- **Editor**: Performs text proofreading and polishing
-
-## Quick Start
-
-1. Clone the repository:
-   ```bash
-   git clone git@github.com:magatamaclub/novelist.git
-   ```
-
-2. Install dependencies:
-   ```bash
-   pip install -e .
-   ```
-
-3. Set environment variables (refer to .env.example)
-
-4. Run the program:
-   ```bash
-   python -m novelist
-   ```
-
-## Documentation
-
-Please refer to our [Wiki page](https://github.com/magatamaclub/novelist/wiki)
-
----
-
-# ノベリストクラブ
-
-複数のAIエージェントによる協調小説執筆システム。
-
-## 特徴
-
-- 完全な小説執筆プロセスをシミュレートするマルチエージェント協調
-- AutoGenフレームワークによるインテリジェントな対話システム
-- カスタマイズ可能なストーリーテーマと執筆スタイル
-- 完全なログ記録とバージョン管理
-
-## コンポーネント
-
-- **クリエイター**: ストーリーの構想とアウトライン生成を担当
-- **ライター**: アウトラインに基づいてコンテンツを作成
-- **スーパーバイザー**: コンテンツの論理性と一貫性をレビュー
-- **エディター**: テキストの校正と洗練を実施
-
-## クイックスタート
-
-1. リポジトリをクローン：
-   ```bash
-   git clone git@github.com:magatamaclub/novelist.git
-   ```
-
-2. 依存関係をインストール：
-   ```bash
-   pip install -e .
-   ```
-
-3. 環境変数を設定（.env.exampleを参照）
-
-4. プログラムを実行：
-   ```bash
-   python -m novelist
-   ```
-
-## ドキュメント
-
-詳細は[Wikiページ](https://github.com/magatamaclub/novelist/wiki)をご参照ください。
+MIT License
