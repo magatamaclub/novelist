@@ -1,144 +1,105 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from typing import Dict, Any, List
-import os
-from datetime import datetime
-
-from ..core.workflow import NovelAgent
+from typing import Dict, Any, List, Optional, Union
+from ..core.adapter import NovelAgentAdapter, Message
 
 
-class WriterAgent(NovelAgent):
-    """小说创作Agent"""
+class WriterAgent(NovelAgentAdapter):
+    """小说写作者，负责根据大纲进行具体写作"""
 
     def __init__(self):
         super().__init__("writer")
 
-    def _format_chapter_prompt(
-        self, chapter: Dict[str, Any], outline: Dict[str, Any]
-    ) -> str:
-        """
-        格式化章节写作提示
-
-        Args:
-            chapter: 章节信息
-            outline: 故事大纲
-
-        Returns:
-            str: 格式化后的提示文本
-        """
-        prompt = [
-            f"请根据以下要素创作《{outline['title']}》第{chapter['chapter']}章的内容：\n",
-            f"章节标题：{chapter['title']}",
-            "\n故事背景：",
-            f"- 时代：{outline['settings']['time']}",
-            f"- 地点：{outline['settings']['location']}",
-            f"- 季节：{outline['settings']['season']}",
-            "\n写作要求：",
-            f"- 风格基调：{outline['style']['tone']}",
-            f"- 叙事节奏：{outline['style']['pacing']}",
-            f"- 叙述视角：{outline['style']['narrative']}",
-            f"- 表现重点：{outline['style']['focus']}",
-            "\n本章关键情节：",
-        ]
-
-        for point in chapter["key_points"]:
-            prompt.append(f"- {point}")
-
-        prompt.extend(["\n人物信息："])
-
-        for char in outline["characters"]:
-            prompt.extend(
-                [
-                    f"\n{char['name']}：",
-                    f"- 角色：{char['role']}",
-                    f"- 性格：{', '.join(char['traits'])}",
-                ]
-            )
-
-        return "\n".join(prompt)
-
-    async def _generate_chapter_content(
-        self, chapter: Dict[str, Any], outline: Dict[str, Any]
-    ) -> str:
-        """
-        生成章节内容
-
-        Args:
-            chapter: 章节信息
-            outline: 故事大纲
-
-        Returns:
-            str: 生成的章节内容
-        """
-        # 构建写作提示
-        prompt = self._format_chapter_prompt(chapter, outline)
-
-        # 请求LLM生成内容
-        response = await self.generate_reply(
-            messages=[{"role": "user", "content": prompt}]
+        # 注册消息处理回调
+        self.register_reply(
+            trigger=["开始写作", "根据大纲写作", "撰写故事"],
+            reply_func=self._write_story,
+        )
+        self.register_reply(
+            trigger=["修改内容", "调整文字", "优化段落"],
+            reply_func=self._revise_content,
         )
 
-        # 格式化章节内容
-        content = [
-            f"# 第{chapter['chapter']}章 {chapter['title']}\n",
-            response.content if hasattr(response, "content") else response,
-            "\n" + "=" * 50 + "\n",  # 章节分隔符
-        ]
-
-        return "\n".join(content)
-
-    async def execute(self, context: Dict[str, Any]) -> Dict[str, Any]:
+    async def handle_message(
+        self, message: Message, sender: Optional["NovelAgentAdapter"] = None
+    ) -> Optional[str]:
         """
-        创作小说内容
+        实现基类的消息处理方法
 
         Args:
-            context: 包含outline和前轮反馈（如果有）的上下文
+            message: 接收到的消息
+            sender: 消息发送者
 
         Returns:
-            Dict[str, Any]: 创作的小说内容
+            处理后的回复
         """
-        self.log_activity("开始", "开始创作小说内容")
+        content = message.content.lower()
+        for pattern, handler in self._message_handlers.items():
+            if pattern.lower() in content:
+                response = await handler({"content": content}, sender)
+                if isinstance(response, dict):
+                    return response["content"]
+                return response
+        return None
 
-        try:
-            # 获取大纲
-            outline = context.get("outline")
-            if not outline:
-                raise ValueError("未找到故事大纲")
+    async def _write_story(
+        self, message: Dict[str, Any], sender: Any
+    ) -> Union[str, Dict[str, Any]]:
+        """根据大纲进行写作"""
+        self.log_activity("写作", "开始根据大纲创作故事")
 
-            # 获取之前的反馈（如果有）
-            feedback = context.get("feedback", {})
-            if feedback:
-                self.log_activity("信息", f"处理审阅反馈: {feedback}")
+        response_text = """作为故事写作者，我会：
+1. 仔细分析大纲结构
+2. 展开情节细节
+3. 塑造生动的人物形象
+4. 描绘丰富的场景
+5. 打磨文字表达
 
-            # 生成小说内容
-            draft = []
-            for chapter in outline["chapters"]:
-                self.log_activity("进行", f"创作第{chapter['chapter']}章")
-                chapter_content = await self._generate_chapter_content(chapter, outline)
-                draft.append(chapter_content)
+开始进行写作..."""
 
-            # 合并所有章节
-            complete_draft = "\n".join(
-                [f"# {outline['title']}\n", f"作者：AI写手\n", "---\n", *draft]
-            )
+        # 当需要详细元数据时返回字典
+        if message.get("require_metadata"):
+            return {
+                "role": "assistant",
+                "content": response_text,
+                "metadata": {"action": "write_story", "status": "in_progress"},
+            }
 
-            # 保存草稿
-            output_dir = os.path.join(
-                os.path.dirname(os.path.dirname(__file__)), "outputs", "drafts"
-            )
-            os.makedirs(output_dir, exist_ok=True)
+        # 默认返回字符串响应
+        return response_text
 
-            draft_file = os.path.join(
-                output_dir, f"draft_{datetime.now():%Y%m%d_%H%M%S}.txt"
-            )
+    async def _revise_content(
+        self, message: Dict[str, Any], sender: Any
+    ) -> Union[str, Dict[str, Any]]:
+        """修改和优化内容"""
+        self.log_activity("修改", "开始修改和优化内容")
 
-            with open(draft_file, "w", encoding="utf-8") as f:
-                f.write(complete_draft)
+        response_text = """收到修改建议，我将：
+1. 优化段落结构
+2. 提升描写细节
+3. 增强情节张力
+4. 改进对话内容
+5. 完善文字表达
 
-            self.log_activity("完成", f"创作完成，草稿已保存至: {draft_file}")
-            return {"current_draft": complete_draft}
+开始进行修改..."""
 
-        except Exception as e:
-            self.log_activity("错误", f"创作过程出错: {str(e)}")
-            raise
+        # 当需要详细元数据时返回字典
+        if message.get("require_metadata"):
+            return {
+                "role": "assistant",
+                "content": response_text,
+                "metadata": {"action": "revise_content", "status": "in_progress"},
+            }
+
+        # 默认返回字符串响应
+        return response_text
+
+    async def execute(self, context: Dict[str, Any]) -> Dict[str, Any]:
+        """执行写作任务"""
+        self.log_activity("执行", "写作者就绪")
+        return {
+            "status": "ready",
+            "agent_type": "writer",
+            "capabilities": ["story_writing", "content_revision"],
+        }
