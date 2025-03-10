@@ -5,16 +5,20 @@ from typing import Dict, Any, Optional, List
 from abc import ABC, abstractmethod
 
 try:
-    from autogen.core import Agent, Message
+    import autogen_core
+    from autogen_core import Agent, BaseAgent
+
+    AgentBase = Agent or BaseAgent
+    Message = Dict[str, Any]
 except ImportError:
-    raise ImportError("请先安装autogen-core")
+    raise ImportError("请先安装autogen-core==0.4.8.2")
 
 from .logging import NovelLogger
 
 logger = NovelLogger().get_logger(__name__)
 
 
-class NovelAgentAdapter(Agent, ABC):
+class NovelAgentAdapter(AgentBase, ABC):
     """
     适配层：将现有的NovelAgent接口适配到autogen.core.Agent
     """
@@ -30,17 +34,32 @@ class NovelAgentAdapter(Agent, ABC):
             llm_config: LLM配置
             **kwargs: 其他参数
         """
-        system_message = f"你是一个专业的小说创作{name}。"
-        super().__init__(
-            name=name, system_message=system_message, llm_config=llm_config, **kwargs
-        )
+        # AgentBase可能不支持这些参数，所以我们保存它们但不传递给父类
+        self._name = name
+        self._llm_config = llm_config
+        self._system_message = f"你是一个专业的小说创作{name}。"
+
+        # 只调用基类的基本初始化
+        super().__init__()
 
         self._message_handlers = {}
         logger.info(f"创建了{name} Agent")
 
+    @property
+    def name(self) -> str:
+        return self._name
+
+    @property
+    def system_message(self) -> str:
+        return self._system_message
+
+    @property
+    def llm_config(self) -> Optional[Dict[str, Any]]:
+        return self._llm_config
+
     def register_reply(self, trigger: List[str], reply_func: Any) -> None:
         """
-        注册消息处理函数（兼容旧接口）
+        注册消息处理函数
 
         Args:
             trigger: 触发词列表
@@ -51,7 +70,7 @@ class NovelAgentAdapter(Agent, ABC):
 
     @abstractmethod
     async def handle_message(
-        self, message: Message, sender: Optional["Agent"] = None
+        self, message: Message, sender: Optional["AgentBase"] = None
     ) -> Optional[str]:
         """
         处理接收到的消息
@@ -69,7 +88,7 @@ class NovelAgentAdapter(Agent, ABC):
         self, message: Dict[str, Any], sender: Any
     ) -> Optional[str]:
         """
-        生成回复（兼容旧接口）
+        生成回复（兼容autogen.core.Agent接口）
 
         Args:
             message: 消息内容
@@ -109,7 +128,7 @@ class NovelAgentAdapter(Agent, ABC):
     async def get_response(
         self,
         message: Message,
-        sender: Optional["Agent"] = None,
+        sender: Optional["AgentBase"] = None,
         **kwargs,
     ) -> Optional[str]:
         """
