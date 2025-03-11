@@ -43,7 +43,8 @@ class NovelAgentAdapter(AgentBase, ABC):
         super().__init__()
 
         self._message_handlers = {}
-        logger.info(f"创建了{name} Agent")
+        self.logger = NovelLogger().get_logger(f"novelist.{name}")
+        self.logger.info(f"创建了{name} Agent")
 
     @property
     def name(self) -> str:
@@ -124,6 +125,10 @@ class NovelAgentAdapter(AgentBase, ABC):
             "agent_type": self.name,
             "capabilities": ["conversation", "task_execution"],
         }
+
+    def log_activity(self, action: str, message: str) -> None:
+        """记录Agent活动日志"""
+        self.logger.info(f"[{action}] {message}")
 
     async def get_response(
         self,

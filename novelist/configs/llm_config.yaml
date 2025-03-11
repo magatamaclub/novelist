@@ -59,3 +59,17 @@ agents:
       负责对文章进行校对和润色，确保文字流畅，表达准确。
       需要纠正错别字、语法错误，并优化文字表达。
       特别注意：保持语言的优美性和专业性。
+
+  manager:
+    name: "项目经理"
+    llm_config:
+      model: "deepseek-chat-33b"
+      temperature: 0.3
+      max_tokens: 2048
+      api_base: ${DEEPSEEK_API_BASE}
+      api_key: ${DEEPSEEK_API_KEY}
+    role_prompt: |
+      你是整个写作项目的管理者。
+      负责协调创意生成、写作、监督和编辑之间的工作。
+      确保写作过程的顺畅进行，并保证最终作品的质量。
+      特别关注：项目进度管理和质量控制。
