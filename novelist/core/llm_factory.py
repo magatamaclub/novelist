@@ -107,7 +107,7 @@ class LLMFactory:
         instance = cls()
 
         # 检查必要的环境变量
-        required_env_vars = ["OPENAI_API_KEY", "OPENAI_API_BASE"]
+        required_env_vars = ["DEEPSEEK_API_KEY", "DEEPSEEK_API_BASE"]
         missing_vars = [var for var in required_env_vars if not os.getenv(var)]
         if missing_vars:
             raise ValueError(f"缺少必要的环境变量: {', '.join(missing_vars)}")

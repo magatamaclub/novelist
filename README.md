@@ -87,37 +87,21 @@ novelist
 
 ## 运行测试
 
-1. 安装测试依赖：
-```bash
-pip install -r tests/requirements-test.txt
-```
+在运行测试之前，确保已正确配置环境变量（包括必需的 OPENAI_API_KEY 和 OPENAI_API_BASE）。
 
-2. 运行测试：
 ```bash
+# 确保已安装测试依赖
+pip install -e ".[test]"
+
 # 运行所有测试
-pytest
+pytest tests/
 
-# 运行特定测试
-pytest tests/test_workflow_integration.py  # 集成测试
-pytest tests/test_creator_agent.py        # 创意生成器测试
-pytest tests/test_writer_agent.py         # 写作者测试
-pytest tests/test_supervisor_agent.py     # 监制测试
-pytest tests/test_editor_agent.py         # 编辑测试
+# 带覆盖率报告
+pytest --cov=novelist tests/
 
-# 按标记运行测试
-pytest -m asyncio      # 异步测试
-pytest -m unit        # 单元测试
-pytest -m integration # 集成测试
-
-# 生成覆盖率报告
-pytest --cov=novelist  # 终端报告
-pytest --cov=novelist --cov-report=html  # HTML报告
+# 运行指定测试
+pytest tests/test_specific_module.py
 ```
-
-3. 查看测试报告：
-   - 终端输出显示测试结果和覆盖率
-   - HTML报告位于 `tests/coverage_html/`
-   - 日志文件位于 `novelist/outputs/logs/`
 
 ## 项目结构
 
